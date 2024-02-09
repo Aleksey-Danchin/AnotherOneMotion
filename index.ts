@@ -1,4 +1,10 @@
-import { getCurrentFrame, drawScene, tween, waitForAll } from "./core";
+import {
+	getCurrentFrame,
+	drawScene,
+	tween,
+	waitForAll,
+	lazyTween,
+} from "./core";
 import { delay, mutate, map } from "./utils";
 
 drawScene(async () => {
@@ -42,6 +48,19 @@ drawScene(async () => {
 			});
 		});
 	});
+
+	point.x = -100;
+	point.y = -100;
+	startX = point.x;
+	startY = point.y;
+
+	const act1 = lazyTween(1, (value) => (point.x = map(startX, 0, value)));
+	const act2 = lazyTween(1, (value) => (point.y = map(startY, 0, value)));
+
+	console.log("<acts>");
+	await act1().then(act2);
+	console.log({ frame: getCurrentFrame(), point });
+	console.log("</acts>");
 
 	console.log({ frame: getCurrentFrame(), point });
 	await Promise.all([mutate(point, "x", 0, 1), mutate(point, "y", 0, 2)]);
