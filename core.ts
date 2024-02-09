@@ -15,16 +15,28 @@ let currentFrame = 0;
 
 export const getCurrentFrame = () => currentFrame;
 
+export const lazyTween = (time: number, callback: TweenCallback) => {
+	let tween: null | Promise<unknown> = null;
+
+	return () => {
+		if (!tween) {
+			tween = new Promise((resolve, reject) =>
+				sandglasses.push({
+					firstFrame: currentFrame + 1,
+					lastFrame: Math.floor(currentFrame + time * fps),
+					callback,
+					resolve,
+					reject,
+				})
+			);
+		}
+
+		return tween;
+	};
+};
+
 export const tween = (time: number, callback: TweenCallback) =>
-	new Promise((resolve, reject) =>
-		sandglasses.push({
-			firstFrame: currentFrame + 1,
-			lastFrame: Math.floor(currentFrame + time * fps),
-			callback,
-			resolve,
-			reject,
-		})
-	);
+	lazyTween(time, callback)();
 
 export const drawScene = async (main: () => Promise<any>) => {
 	let mainFlag = true;

@@ -51,7 +51,6 @@ drawScene(async () => {
 	mutate(point, "y", 0, 2);
 	tween(1, (value) => console.log({ frame: getCurrentFrame(), value }));
 	await waitForAll();
-
 	console.log({ frame: getCurrentFrame(), point });
 
 	console.log("finish");
