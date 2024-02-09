@@ -1,4 +1,4 @@
-import { getCurrentFrame, drawScene, tween } from "./core";
+import { getCurrentFrame, drawScene, tween, waitForAll } from "./core";
 import { delay, mutate, map } from "./utils";
 
 drawScene(async () => {
@@ -45,6 +45,13 @@ drawScene(async () => {
 
 	console.log({ frame: getCurrentFrame(), point });
 	await Promise.all([mutate(point, "x", 0, 1), mutate(point, "y", 0, 2)]);
+	console.log({ frame: getCurrentFrame(), point });
+
+	mutate(point, "x", 0, 1);
+	mutate(point, "y", 0, 2);
+	tween(1, (value) => console.log({ frame: getCurrentFrame(), value }));
+	await waitForAll();
+
 	console.log({ frame: getCurrentFrame(), point });
 
 	console.log("finish");

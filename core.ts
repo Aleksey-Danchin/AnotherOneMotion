@@ -36,7 +36,17 @@ export const drawScene = async (main: () => Promise<any>) => {
 
 	while (mainFlag) {
 		if (!sandglasses.length) {
-			await Promise.resolve();
+			if (awaiter.promise) {
+				awaiter.resolve(getCurrentFrame());
+
+				Object.assign(awaiter, {
+					promise: null,
+					resolve: null,
+				});
+			} else {
+				await Promise.resolve();
+			}
+
 			continue;
 		}
 
@@ -94,4 +104,27 @@ export const drawScene = async (main: () => Promise<any>) => {
 
 		await Promise.resolve();
 	}
+};
+
+const awaiter:
+	| {
+			promise: Promise<unknown>;
+			resolve: (value: any) => void;
+	  }
+	| {
+			promise: null;
+			resolve: null;
+	  } = {
+	promise: null,
+	resolve: null,
+};
+
+export const waitForAll = (): Promise<unknown> => {
+	if (!awaiter.promise) {
+		// @ts-ignore
+		awaiter.promise = new Promise((resolve) => (awaiter.resolve = resolve));
+	}
+
+	// @ts-ignore
+	return awaiter.promise as Promise<unknown>;
 };
